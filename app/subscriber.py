@@ -1,0 +1,66 @@
+import paho.mqtt.client as mqtt
+import json
+
+# Import the required classes
+from system_analyzer import Analyzer
+from data_cleaner import DataCleaner
+from data_enricher import DataEnricher
+from algorithms import Algorithms
+from pipeline import DataPipeline
+
+# Initialize the global buffer
+buffer = []
+
+
+def on_connect(client, userdata, flags, rc):
+    print(f"Connected with result code {rc}")
+    client.subscribe("/data/soap")
+
+
+def on_message(client, userdata, msg):
+    # Decode the message payload and load it into a Python dictionary
+    message = msg.payload.decode("utf-8")
+    json_data = json.loads(message)
+
+    # Extract the soap data from the message and store it in a list
+    soap_data = json_data['message']['soap_data']
+
+    # Initialize the required objects for the data pipeline
+    analyzer = Analyzer()
+    data_cleaner = DataCleaner()
+    data_enricher = DataEnricher()
+    algorithms = Algorithms()
+    data_pipeline = DataPipeline(
+        analyzer, data_cleaner, data_enricher, algorithms)
+
+    # Process the soap data using the data pipeline
+    result = data_pipeline.process_data(soap_data)
+
+    # Add the result to the buffer
+    buffer.append(result)
+
+    # Check if the buffer has enough items to be processed by the algorithms module
+    if len(buffer) >= 10:
+        # Analyze system resources
+        available_memory, cpu_usage, available_disk_space, gpu_usage = analyzer.analyze_resources()
+
+        # Determine which algorithm to use based on system resources
+        if cpu_usage > 80 or gpu_usage > 80:
+            algorithm_result = algorithms.complex_algorithm(buffer)
+        else:
+            algorithm_result = algorithms.simple_algorithm(buffer)
+
+        # Print the algorithm result
+        print(f"Algorithm Result: {algorithm_result}")
+
+        # Clear the buffer
+        buffer.clear()
+
+
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
+
+client.connect("localhost", 1883, 60000)
+
+client.loop_forever()

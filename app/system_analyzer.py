@@ -16,6 +16,8 @@ storagePercent = int(storageUsed/storageTotal*100)
 
 class Analyzer:
 
+    # device parameter extraction module
+
     @staticmethod
     def getRamTotal():
         return memTotal
