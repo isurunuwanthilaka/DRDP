@@ -3,15 +3,13 @@ import time
 from system_analyzer import Analyzer
 from data_cleaner import DataCleaner
 from data_enricher import DataEnricher
-from algorithms import Algorithms
 
 
 class DataPipeline:
-    def __init__(self, analyzer: Analyzer, data_cleaner: DataCleaner, data_enricher: DataEnricher, algorithms: Algorithms):
+    def __init__(self, analyzer: Analyzer, data_cleaner: DataCleaner, data_enricher: DataEnricher):
         self.analyzer = analyzer
         self.data_cleaner = data_cleaner
         self.data_enricher = data_enricher
-        self.algorithms = algorithms
 
     def process_data(self, data):
         # Analyze system resources
@@ -29,11 +27,5 @@ class DataPipeline:
         else:
             enriched_data = self.data_enricher.enrich_data_hard(cleaned_data)
 
-        # Determine which algorithm to use based on system resources
-        if cpu_usage > 80 or gpu_usage > 80:
-            result = self.algorithms.complex_algorithm(enriched_data)
-        else:
-            result = self.algorithms.simple_algorithm(enriched_data)
-
         # Return the result
-        return result
+        return enriched_data

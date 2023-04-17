@@ -30,8 +30,7 @@ def on_message(client, userdata, msg):
     data_cleaner = DataCleaner()
     data_enricher = DataEnricher()
     algorithms = Algorithms()
-    data_pipeline = DataPipeline(
-        analyzer, data_cleaner, data_enricher, algorithms)
+    data_pipeline = DataPipeline(analyzer, data_cleaner, data_enricher)
 
     # Process the soap data using the data pipeline
     result = data_pipeline.process_data(soap_data)
@@ -61,6 +60,6 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("localhost", 1883, 60000)
+client.connect("localhost", 1883, 3600)
 
 client.loop_forever()
