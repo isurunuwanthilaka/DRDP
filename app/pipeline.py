@@ -17,15 +17,19 @@ class DataPipeline:
 
         # Determine which cleaning method to use based on system resources
         if available_memory < 500:
-            cleaned_data = self.data_cleaner.clean_data_advanced(data)
+            data['producer'] = self.data_cleaner.clean_data_advanced(
+                data['producer'])
         else:
-            cleaned_data = self.data_cleaner.clean_data(data)
+            data['producer'] = self.data_cleaner.clean_data_simple(
+                data['producer'])
 
         # Enrich the data
         if available_memory < 500:
-            enriched_data = self.data_enricher.enrich_data_simple(cleaned_data)
+            data['producer'] = self.data_enricher.enrich_data_simple(
+                data['producer'])
         else:
-            enriched_data = self.data_enricher.enrich_data_hard(cleaned_data)
+            data['producer'] = self.data_enricher.enrich_data_hard(
+                data['producer'])
 
         # Return the result
-        return enriched_data
+        return data

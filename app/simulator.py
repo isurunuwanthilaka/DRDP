@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import time
 import random
 import datetime
+import json
 
 # Set up MQTT broker connection
 broker = "localhost"
@@ -15,15 +16,7 @@ except ConnectionError:
 
 # Define list of device IDs and sensor readings
 device_ids = ["C001", "C002", "C003", "C004"]
-sensor_readings = {
-    1: "T",
-    2: "T",
-    3: "F",
-    4: "F",
-    5: "T",
-    6: "F",
-    7: "T"
-}
+producers = ["isuru", "isuru@mrt.com", "0775556667", "the isu@gmail.com"]
 
 # Set up simulation parameters
 start_time = time.time()
@@ -39,11 +32,23 @@ for i in range(limit):
     sequence_id += 1
 
     # Choose a random sensor reading
-    sensor_id = random.randint(1, 7)
-    sensor_reading = sensor_readings[sensor_id]
+    sensor_reading = random.randint(0, 2)
+
+    # Choose a random device and increment the sequence ID
+    producer = producers[random.randint(0, 3)]
+    sequence_id += 1
 
     # Construct message and publish to MQTT broker
-    message = f"{device_id},{sequence_id},{sensor_reading},1"
+    data = {
+        "device_id": device_id,
+        "sequence_id": sequence_id,
+        "sensor_reading": sensor_reading,
+        "producer": producer
+    }
+
+    # Convert the dictionary to a JSON string
+    message = json.dumps(data)
+
     client.publish("/data/soap", message)
 
     # Print message for debugging purposes

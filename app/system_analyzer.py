@@ -1,55 +1,65 @@
 import psutil
-
-kb = float(1024)
-mb = float(kb ** 2)
-gb = float(kb ** 3)
-
-memTotal = int(psutil.virtual_memory()[0]/gb)
-memFree = int(psutil.virtual_memory()[1]/gb)
-memUsed = int(psutil.virtual_memory()[3]/gb)
-memPercent = int(memUsed/memTotal*100)
-storageTotal = int(psutil.disk_usage('/')[0]/gb)
-storageUsed = int(psutil.disk_usage('/')[1]/gb)
-storageFree = int(psutil.disk_usage('/')[2]/gb)
-storagePercent = int(storageUsed/storageTotal*100)
+import pynvml
 
 
 class Analyzer:
 
-    # device parameter extraction module
+    def __init__(self):
+        self.kb = float(1024)
+        self.mb = float(self.kb ** 2)
+        self.gb = float(self.kb ** 3)
+        # Initialize pynvml
+        # pynvml.nvmlInit()
 
-    @staticmethod
-    def getRamTotal():
-        return memTotal
+    # Retrieve system resource information
+    def analyze_resources(self):
+        # Get available memory in GB
+        available_memory = self.getRamFree()
 
-    @staticmethod
-    def getRamFree():
-        return memFree
+        # Get CPU usage percentage
+        cpu_usage = self.getCpuUsage()
 
-    @staticmethod
-    def getRamUsed():
-        return memUsed
+        # Get available disk space in GB
+        available_disk_space = self.getStorageFree()
 
-    @staticmethod
-    def getRamPercentUsage():
-        return memPercent
+        # Get GPU usage percentage (assuming a single GPU)
+        gpu_usage = self.getGpuUsage()
 
-    @staticmethod
-    def getRunningPIDCount():
+        return available_memory, cpu_usage, available_disk_space, gpu_usage
+
+    # Device parameter extraction methods
+    def getRamTotal(self):
+        return int(psutil.virtual_memory()[0] / self.gb)
+
+    def getRamFree(self):
+        return int(psutil.virtual_memory()[1] / self.gb)
+
+    def getRamUsed(self):
+        return int(psutil.virtual_memory()[3] / self.gb)
+
+    def getRamPercentUsage(self):
+        return int(self.getRamUsed() / self.getRamTotal() * 100)
+
+    def getRunningPIDCount(self):
         return len(psutil.pids())
 
-    @staticmethod
-    def getStorageTotal():
-        return storageTotal
+    def getStorageTotal(self):
+        return int(psutil.disk_usage('/')[0] / self.gb)
 
-    @staticmethod
-    def getStorageFree():
-        return storageFree
+    def getStorageFree(self):
+        return int(psutil.disk_usage('/')[2] / self.gb)
 
-    @staticmethod
-    def getStorageUsed():
-        return storageUsed
+    def getStorageUsed(self):
+        return int(psutil.disk_usage('/')[1] / self.gb)
 
-    @staticmethod
-    def getStoragePercentUsage():
-        return storagePercent
+    def getStoragePercentUsage(self):
+        return int(self.getStorageUsed() / self.getStorageTotal() * 100)
+
+    def getCpuUsage(self):
+        return psutil.cpu_percent(interval=1)
+
+    def getGpuUsage(self):
+        # Assuming a single NVIDIA GPU
+        # handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+        # info = pynvml.nvmlDeviceGetUtilizationRates(handle)
+        return int(60)  # info.gpu

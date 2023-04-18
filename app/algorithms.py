@@ -15,7 +15,7 @@ class Algorithms:
         Returns:
             The sum of the integers in the input list.
         """
-        result = sum(data)
+        result = sum([x['sensor_reading'] for x in data])
         return result
 
     def complex_algorithm(self, data):
@@ -28,5 +28,5 @@ class Algorithms:
         Returns:
             The sum of the squared integers in the input list.
         """
-        result = sum([x**2 for x in data])
+        result = sum([x['sensor_reading']*2 for x in data])
         return result
