@@ -4,10 +4,7 @@ from nltk.stem import PorterStemmer
 
 
 class DataCleaner:
-    """
-    A class that contains methods for cleaning and processing data received from an MQTT subscription.
-    """
-
+  
     def __init__(self):
         self.stop_words = set(["the", "and", "in", "is", "it"])
 
@@ -22,15 +19,7 @@ class DataCleaner:
             A list of strings containing the cleaned and processed data.
         """
         # Remove all non-alphanumeric characters and convert to lowercase
-        cleaned_data = re.sub('[^0-9a-zA-Z]+', ' ', data).lower()
-
-        # Tokenize the data into individual words
-        tokenized_data = cleaned_data.split()
-
-        # Remove stop words and perform stemming
-        ps = PorterStemmer()
-        cleaned_data = [ps.stem(word)
-                        for word in tokenized_data if word not in self.stop_words]
+        cleaned_data = re.sub('[^0-9a-zA-Z]+', '-', data).lower()
 
         return cleaned_data
 
@@ -44,21 +33,9 @@ class DataCleaner:
         Returns:
             A list of strings containing the cleaned and processed data.
         """
-        # Remove all non-alphanumeric characters and convert to lowercase
-        cleaned_data = re.sub('[^0-9a-zA-Z]+', ' ', data).lower()
+        # Remove all non-alphanumeric characters and convert to uppercase
 
-        # Tokenize the data into individual words
-        tokenized_data = cleaned_data.split()
-
-        # Remove stop words and perform stemming
-        ps = PorterStemmer()
-        cleaned_data = []
-        for word in tokenized_data:
-            if word not in self.stop_words:
-                cleaned_word = ps.stem(word)
-                cleaned_data.append(cleaned_word)
-
-                # Sleep for a short time to simulate a resource-intensive operation
-                time.sleep(0.001)
+        cleaned_data = re.sub('[^0-9a-zA-Z@.]+', '-', data).upper()
+        time.sleep(0.001)
 
         return cleaned_data

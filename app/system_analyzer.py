@@ -1,5 +1,5 @@
 import psutil
-import pynvml
+# import pynvml
 
 
 class Analyzer:

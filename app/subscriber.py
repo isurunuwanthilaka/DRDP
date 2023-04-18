@@ -35,6 +35,7 @@ def on_message(client, userdata, msg):
 
         # Process the soap data using the data pipeline
         result = data_pipeline.process_data(soap_data)
+        print(f"Pipeline Result: {result}")
 
         # Add the result to the buffer
         buffer.append(result)

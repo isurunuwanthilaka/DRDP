@@ -28,5 +28,5 @@ class Algorithms:
         Returns:
             The sum of the squared integers in the input list.
         """
-        result = sum([x['sensor_reading']*2 for x in data])
+        result = sum([x['sensor_reading'] * 2 for x in data])
         return result
