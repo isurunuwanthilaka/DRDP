@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 import json
-
+import time
 # Import the required classes
 from system_analyzer import Analyzer
 from data_cleaner import DataCleaner
@@ -10,6 +10,7 @@ from pipeline import DataPipeline
 
 # Initialize the global buffer
 buffer = []
+b = time.time()
 
 
 def on_connect(client, userdata, flags, rc):
@@ -19,6 +20,8 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     # Decode the message payload and load it into a Python dictionary
+    s = time.time()
+    global b
     try:
         message = msg.payload.decode("utf-8")
         json_data = json.loads(message)
@@ -36,6 +39,7 @@ def on_message(client, userdata, msg):
         # Process the soap data using the data pipeline
         result = data_pipeline.process_data(soap_data)
         print(f"Pipeline Result: {result}")
+        print(f"Pipeline Result T: {time.time()-s}")
 
         # Add the result to the buffer
         buffer.append(result)
@@ -53,6 +57,8 @@ def on_message(client, userdata, msg):
 
             # Print the algorithm result
             print(f"Algorithm Result: {algorithm_result}")
+            print(f"Algorithm Result T: {time.time() - b }")
+            b = time.time()
 
             # Clear the buffer
             buffer.clear()
